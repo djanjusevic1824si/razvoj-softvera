@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Entity
 @Table(
-        uniqueConstraints = @UniqueConstraint(columnNames = {"nastavnik_id", "predmet_id"})
+        uniqueConstraints = @UniqueConstraint(columnNames = {"nastavnik_id", "predmet_id", "studijski_program_id"})
 )
 @Data
 public class DrziPredmet {
@@ -19,4 +19,7 @@ public class DrziPredmet {
 
     @ManyToOne(optional = false)
     private Predmet predmet;
+
+    @ManyToOne(optional = false)
+    private StudijskiProgram studijskiProgram;
 }
