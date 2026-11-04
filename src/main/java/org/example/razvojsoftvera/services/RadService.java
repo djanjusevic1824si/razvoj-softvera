@@ -99,10 +99,10 @@ public class RadService {
         }
 
         if (request.poeni().signum() < 0
-                || request.poeni().compareTo(new BigDecimal("999.9")) > 0
+                || request.poeni().compareTo(new BigDecimal("130")) > 0
                 || request.poeni().stripTrailingZeros().scale() > 1) {
             throw new BadRequestException(
-                    "Poeni moraju biti od 0 do 999.9 sa najvise jednom decimalom"
+                    "Poeni moraju biti od 0 do 130 sa najvise jednom decimalom"
             );
         }
 

@@ -59,7 +59,7 @@ public class PredajaService {
         }
     }
 
-    @Transactional
+    @Transactional // mozda ne dozvoliti
     public Predaja update(Long id, PredajaUpdateRequest request) {
         Predaja predaja = findByIdOrThrow(id);
         findRadForUpdateOrThrow(predaja.getRad().getId());
