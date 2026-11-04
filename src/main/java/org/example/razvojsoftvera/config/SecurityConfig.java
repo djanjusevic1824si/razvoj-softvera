@@ -45,12 +45,13 @@ public class SecurityConfig {
     ) throws Exception {
 
         return http
-                .csrf((AbstractHttpConfigurer::disable)  )
+                .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
+
                         .requestMatchers(
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
@@ -66,17 +67,43 @@ public class SecurityConfig {
 
                         .requestMatchers(
                                 GET,
-                                "/api/student/all",
-                                "/api/student/svi"
+                                "/api/student-indeksi/all",
+                                "/api/student-indeksi/svi",
+                                "/api/prijave/all",
+                                "/api/prijave/svi"
+                        ).hasRole("NASTAVNIK")
+
+                        .requestMatchers(
+                                GET,
+                                "/api/student-indeksi/{id}",
+                                "/api/student-indeksi/student/{studentId}",
+                                "/api/prijave/{id}",
+                                "/api/prijave/student-indeks/{studentIndeksId}"
+                        ).hasAnyRole("STUDENT", "NASTAVNIK")
+
+                        .requestMatchers(
+                                GET,
+                                "/api/studenti/all",
+                                "/api/studenti/svi"
+                        ).hasAnyRole("STUDENT", "NASTAVNIK")
+
+                        .requestMatchers(
+                                GET,
+                                "/api/predmeti/**",
+                                "/api/studijski-programi/**",
+                                "/api/termini/**",
+                                "/api/ispitni-rokovi/**"
                         ).hasAnyRole("STUDENT", "NASTAVNIK")
 
                         .anyRequest().hasRole("NASTAVNIK")
                 )
-                .oauth2ResourceServer(oauth -> oauth
+
+                .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt
                                 .jwtAuthenticationConverter(converter)
                         )
                 )
+
                 .build();
     }
 

@@ -1,6 +1,5 @@
 package org.example.razvojsoftvera.model;
 
-
 import jakarta.persistence.*;
 import lombok.Data;
 

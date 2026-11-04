@@ -1,25 +1,49 @@
 package org.example.razvojsoftvera.repositories;
 
 import org.example.razvojsoftvera.model.Student;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface StudentRepository extends JpaRepository<Student, Long> {
-    boolean existsByKorisnikId(Long korisnikId);
+
+    @Override
+    @EntityGraph(attributePaths = "korisnik")
+    List<Student> findAll();
+
+    @Override
+    @EntityGraph(attributePaths = "korisnik")
+    Page<Student> findAll(Pageable pageable);
+
+    @Override
+    @EntityGraph(attributePaths = "korisnik")
+    Optional<Student> findById(Long id);
 
     boolean existsByJmbg(String jmbg);
 
-    @Query("""
-            select s from Student s
-            where (:ime is null or lower(s.ime) like lower(concat('%', :ime, '%')))
-              and (:prezime is null or lower(s.prezime) like lower(concat('%', :prezime, '%')))
-            """)
-    List<Student> findByImeAndPrezime(
-            @Param("ime") String ime,
-            @Param("prezime") String prezime
+    boolean existsByJmbgAndIdNot(String jmbg, Long id);
+
+    boolean existsByKorisnikId(Long korisnikId);
+
+    boolean existsByIdAndKorisnik_Id(Long id, Long korisnikId);
+
+    @EntityGraph(attributePaths = "korisnik")
+    Optional<Student> findByKorisnikId(Long korisnikId);
+
+    @EntityGraph(attributePaths = "korisnik")
+    List<Student> findByImeContainingIgnoreCaseAndPrezimeContainingIgnoreCase(
+            String ime,
+            String prezime
     );
 
+    @EntityGraph(attributePaths = "korisnik")
+    Page<Student> findByImeContainingIgnoreCaseAndPrezimeContainingIgnoreCase(
+            String ime,
+            String prezime,
+            Pageable pageable
+    );
 }

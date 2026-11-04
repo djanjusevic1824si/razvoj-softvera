@@ -50,6 +50,7 @@ public class AuthService {
                 .issuedAt(sada)
                 .expiresAt(sada.plusSeconds(TOKEN_TRAJANJE_SEKUNDE))
                 .claim("uloga", korisnik.getUloga().name())
+                .claim("korisnikId", korisnik.getId())
                 .build();
 
         JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();
