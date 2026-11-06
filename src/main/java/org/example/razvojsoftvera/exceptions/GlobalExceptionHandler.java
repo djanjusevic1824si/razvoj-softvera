@@ -1,6 +1,5 @@
 package org.example.razvojsoftvera.exceptions;
 
-import org.apache.coyote.BadRequestException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.*;
 import org.springframework.validation.FieldError;

@@ -7,11 +7,15 @@ import org.example.razvojsoftvera.requests.ZadatakUpdateRequest;
 import org.example.razvojsoftvera.responses.ZadatakResponse;
 import org.example.razvojsoftvera.services.ZadatakService;
 import org.example.razvojsoftvera.utils.Converters;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.print.attribute.standard.Media;
+import java.io.File;
 import java.util.List;
 
 @RestController
@@ -21,9 +25,9 @@ public class ZadatakController {
 
     private final ZadatakService zadatakService;
 
-    @PostMapping("/add")
+    @PostMapping(value = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ZadatakResponse add(@Valid @RequestBody ZadatakCreateRequest request) {
+    public ZadatakResponse add(@Valid @ModelAttribute ZadatakCreateRequest request) {
         return Converters.toZadatakResponse(zadatakService.save(request));
     }
 
@@ -51,6 +55,20 @@ public class ZadatakController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@PathVariable Long id) {
         zadatakService.deleteById(id);
+    }
+
+    @GetMapping("/{id}/projekat")
+    public ResponseEntity<Resource> preuzmiProjekat(@PathVariable Long id){
+        Resource fajl = zadatakService.preuzmiProjekat(id);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        ContentDisposition.attachment()
+                                .filename("zadatak-" + id + ".zip")
+                                .build()
+                                .toString())
+                .body(fajl);
     }
 
     @GetMapping("/nastavnik/{nastavnikId}")

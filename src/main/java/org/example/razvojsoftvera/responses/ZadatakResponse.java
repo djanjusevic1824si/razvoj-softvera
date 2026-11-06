@@ -6,7 +6,6 @@ public record ZadatakResponse(
         Long id,
         String naziv,
         String opis,
-        String putanjaZadatka,
         LocalDateTime datumObjavljivanja,
         Long nastavnikId,
         String imeNastavnika,

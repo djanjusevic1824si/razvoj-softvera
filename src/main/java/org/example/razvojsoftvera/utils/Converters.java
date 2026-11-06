@@ -91,7 +91,6 @@ public final class Converters {
                 zadatak.getId(),
                 zadatak.getNaziv(),
                 zadatak.getOpis(),
-                zadatak.getPutanjaZadatka(),
                 zadatak.getDatumObjavljivanja(),
                 zadatak.getNastavnik().getId(),
                 zadatak.getNastavnik().getIme(),

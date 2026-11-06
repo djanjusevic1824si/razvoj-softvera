@@ -9,6 +9,7 @@ import org.example.razvojsoftvera.repositories.NastavnikRepository;
 import org.example.razvojsoftvera.repositories.ZadatakRepository;
 import org.example.razvojsoftvera.requests.ZadatakCreateRequest;
 import org.example.razvojsoftvera.requests.ZadatakUpdateRequest;
+import org.springframework.core.io.Resource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +27,7 @@ public class ZadatakService {
 
     private final ZadatakRepository zadatakRepository;
     private final NastavnikRepository nastavnikRepository;
+    private final SkladisteFajlova skladisteFajlova;
 
     @Transactional
     public Zadatak save(ZadatakCreateRequest request) {
@@ -35,10 +37,12 @@ public class ZadatakService {
                         "Nastavnik sa id " + request.nastavnikId() + " ne postoji"
                 ));
 
+        String putanja = skladisteFajlova.sacuvaj(request.fajl(), "zadaci");
+
         Zadatak zadatak = new Zadatak();
         zadatak.setNaziv(request.naziv().trim());
         zadatak.setOpis(request.opis());
-        zadatak.setPutanjaZadatka(request.putanjaZadatka().trim());
+        zadatak.setPutanjaZadatka(putanja);
         zadatak.setNastavnik(nastavnik);
 
         try {
@@ -62,7 +66,6 @@ public class ZadatakService {
 
         zadatak.setNaziv(request.naziv().trim());
         zadatak.setOpis(request.opis());
-        zadatak.setPutanjaZadatka(request.putanjaZadatka().trim());
         zadatak.setNastavnik(nastavnik);
 
         try {
@@ -128,5 +131,10 @@ public class ZadatakService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Zadatak sa id " + id + " ne postoji"
                 ));
+    }
+
+    public Resource preuzmiProjekat(Long id){
+        Zadatak zadatak = getEntity(id);
+        return skladisteFajlova.ucitaj(zadatak.getPutanjaZadatka());
     }
 }
