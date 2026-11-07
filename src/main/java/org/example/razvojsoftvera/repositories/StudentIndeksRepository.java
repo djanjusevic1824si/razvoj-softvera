@@ -1,7 +1,6 @@
 package org.example.razvojsoftvera.repositories;
 
 import org.example.razvojsoftvera.model.StudentIndeks;
-import org.example.razvojsoftvera.requests.StavkaSpiska;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -59,4 +58,7 @@ public interface StudentIndeksRepository
     Optional<StudentIndeks> nadjiPoOznaci(
             String oznaka, Integer broj, Integer godinaUpisa
     );
+
+    @EntityGraph(attributePaths = {"student", "studijskiProgram"})
+    Optional<StudentIndeks> findByStudent_Korisnik_IdAndAktivanTrue(Long korisnikId);
 }

@@ -1,10 +1,10 @@
 package org.example.razvojsoftvera.services;
 
-import org.springframework.core.io.Resource;
 import org.example.razvojsoftvera.exceptions.BadRequestException;
 import org.example.razvojsoftvera.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 

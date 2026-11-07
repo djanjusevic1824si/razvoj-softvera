@@ -2,7 +2,8 @@ package org.example.razvojsoftvera.controllers;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.razvojsoftvera.requests.*;
+import org.example.razvojsoftvera.requests.IspitCreateRequest;
+import org.example.razvojsoftvera.requests.IspitUpdateRequest;
 import org.example.razvojsoftvera.responses.IspitResponse;
 import org.example.razvojsoftvera.services.IspitService;
 import org.example.razvojsoftvera.utils.Converters;

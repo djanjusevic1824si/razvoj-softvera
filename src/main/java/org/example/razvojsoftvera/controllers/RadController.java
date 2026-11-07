@@ -2,7 +2,9 @@ package org.example.razvojsoftvera.controllers;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.razvojsoftvera.requests.*;
+import org.example.razvojsoftvera.requests.RadCreateRequest;
+import org.example.razvojsoftvera.requests.RadOcenaRequest;
+import org.example.razvojsoftvera.requests.RadUpdateRequest;
 import org.example.razvojsoftvera.responses.RadResponse;
 import org.example.razvojsoftvera.services.RadService;
 import org.example.razvojsoftvera.utils.Converters;

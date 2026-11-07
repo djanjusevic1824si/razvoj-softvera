@@ -2,7 +2,8 @@ package org.example.razvojsoftvera.controllers;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.razvojsoftvera.requests.*;
+import org.example.razvojsoftvera.requests.KomentarCreateRequest;
+import org.example.razvojsoftvera.requests.KomentarUpdateRequest;
 import org.example.razvojsoftvera.responses.KomentarResponse;
 import org.example.razvojsoftvera.services.KomentarService;
 import org.example.razvojsoftvera.utils.Converters;

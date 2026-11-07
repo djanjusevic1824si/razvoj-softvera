@@ -43,4 +43,6 @@ public interface PrijavaRepository extends JpaRepository<Prijava, Long> {
     boolean existsByStudentIndeks_IdAndIspit_IdAndIdNot(Long studentIndeksId, Long ispitId, Long id);
     long countByIspit_Id(Long ispitId);
 
+    Optional<Prijava> findByStudentIndeks_IdAndIspit_Id(Long studentIndeksId, Long ispitId);
+
 }

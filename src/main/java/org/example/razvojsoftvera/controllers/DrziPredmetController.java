@@ -2,7 +2,8 @@ package org.example.razvojsoftvera.controllers;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.razvojsoftvera.requests.*;
+import org.example.razvojsoftvera.requests.DrziPredmetCreateRequest;
+import org.example.razvojsoftvera.requests.DrziPredmetUpdateRequest;
 import org.example.razvojsoftvera.responses.DrziPredmetResponse;
 import org.example.razvojsoftvera.services.DrziPredmetService;
 import org.example.razvojsoftvera.utils.Converters;

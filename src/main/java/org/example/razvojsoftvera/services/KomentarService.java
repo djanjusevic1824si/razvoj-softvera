@@ -1,10 +1,17 @@
 package org.example.razvojsoftvera.services;
 
 import lombok.RequiredArgsConstructor;
-import org.example.razvojsoftvera.exceptions.*;
-import org.example.razvojsoftvera.model.*;
-import org.example.razvojsoftvera.repositories.*;
-import org.example.razvojsoftvera.requests.*;
+import org.example.razvojsoftvera.exceptions.BadRequestException;
+import org.example.razvojsoftvera.exceptions.ConflictException;
+import org.example.razvojsoftvera.exceptions.ResourceNotFoundException;
+import org.example.razvojsoftvera.model.Komentar;
+import org.example.razvojsoftvera.model.Nastavnik;
+import org.example.razvojsoftvera.model.Rad;
+import org.example.razvojsoftvera.repositories.KomentarRepository;
+import org.example.razvojsoftvera.repositories.NastavnikRepository;
+import org.example.razvojsoftvera.repositories.RadRepository;
+import org.example.razvojsoftvera.requests.KomentarCreateRequest;
+import org.example.razvojsoftvera.requests.KomentarUpdateRequest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

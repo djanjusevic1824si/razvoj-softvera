@@ -193,4 +193,23 @@ public final class Converters {
                 student.getPrezime()
         );
     }
+
+    public static PolaganjeResponse toPolaganjeResponse(Rad rad){
+        Grupa grupa = rad.getGrupa();
+        Termin termin = grupa.getTermin();
+
+        return new PolaganjeResponse(
+                rad.getId(),
+                rad.getStatusRada(),
+                rad.getVremePreuzimanja(),
+                rad.getUcionica(),
+                grupa.getId(),
+                grupa.getNaziv(),
+                termin.getId(),
+                termin.getPocetakIzrade(),
+                termin.getKrajIzrade(),
+                termin.getIspit().getPredmet().getNaziv(),
+                grupa.getZadatak().getNaziv()
+        );
+    }
 }

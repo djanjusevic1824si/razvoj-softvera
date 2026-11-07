@@ -95,6 +95,10 @@ public class SecurityConfig {
                                 "/api/ispitni-rokovi/**"
                         ).hasAnyRole("STUDENT", "NASTAVNIK")
 
+                        .requestMatchers(
+                                "/api/polaganje/**"
+                        ).hasRole("STUDENT")
+                        .requestMatchers("/error").permitAll()
                         .anyRequest().hasRole("NASTAVNIK")
                 )
 

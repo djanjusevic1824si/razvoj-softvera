@@ -1,10 +1,16 @@
 package org.example.razvojsoftvera.services;
 
 import lombok.RequiredArgsConstructor;
-import org.example.razvojsoftvera.exceptions.*;
-import org.example.razvojsoftvera.model.*;
-import org.example.razvojsoftvera.repositories.*;
-import org.example.razvojsoftvera.requests.*;
+import org.example.razvojsoftvera.exceptions.ConflictException;
+import org.example.razvojsoftvera.exceptions.ResourceNotFoundException;
+import org.example.razvojsoftvera.model.Predaja;
+import org.example.razvojsoftvera.model.Rad;
+import org.example.razvojsoftvera.model.StatusRada;
+import org.example.razvojsoftvera.model.TipPredaje;
+import org.example.razvojsoftvera.repositories.PredajaRepository;
+import org.example.razvojsoftvera.repositories.RadRepository;
+import org.example.razvojsoftvera.requests.PredajaCreateRequest;
+import org.example.razvojsoftvera.requests.PredajaUpdateRequest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

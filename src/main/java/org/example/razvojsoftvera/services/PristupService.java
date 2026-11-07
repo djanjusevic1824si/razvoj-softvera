@@ -1,10 +1,12 @@
 package org.example.razvojsoftvera.services;
 
 import lombok.RequiredArgsConstructor;
+import org.example.razvojsoftvera.exceptions.UnauthorizedException;
 import org.example.razvojsoftvera.repositories.PrijavaRepository;
 import org.example.razvojsoftvera.repositories.StudentIndeksRepository;
 import org.example.razvojsoftvera.repositories.StudentRepository;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,5 +101,16 @@ public class PristupService {
         } catch (NumberFormatException ex) {
             return null;
         }
+    }
+
+    public Long ulogovaniStudentKorisnikId(){
+        Long korisnikId = korisnikIdIzTokena(
+                SecurityContextHolder.getContext().getAuthentication()
+        );
+        if (korisnikId == null) {
+            throw new UnauthorizedException("Niste ulogovani kao student");
+        }
+
+        return korisnikId;
     }
 }

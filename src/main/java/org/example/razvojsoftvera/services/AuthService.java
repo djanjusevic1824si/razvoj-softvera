@@ -1,6 +1,7 @@
 package org.example.razvojsoftvera.services;
 
 import lombok.RequiredArgsConstructor;
+import org.example.razvojsoftvera.config.SecurityProperties;
 import org.example.razvojsoftvera.exceptions.ResourceNotFoundException;
 import org.example.razvojsoftvera.model.Korisnik;
 import org.example.razvojsoftvera.repositories.KorisnikRepository;
@@ -21,7 +22,7 @@ import java.util.Locale;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private static final long TOKEN_TRAJANJE_SEKUNDE = 900;
+    private final SecurityProperties securityProperties;
     private final KorisnikRepository korisnikRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtEncoder jwtEncoder;
@@ -48,7 +49,7 @@ public class AuthService {
                 .issuer("razvoj-softvera")
                 .subject(korisnik.getId().toString())
                 .issuedAt(sada)
-                .expiresAt(sada.plusSeconds(TOKEN_TRAJANJE_SEKUNDE))
+                .expiresAt(sada.plus(securityProperties.jwtTrajanje()))
                 .claim("uloga", korisnik.getUloga().name())
                 .claim("korisnikId", korisnik.getId())
                 .build();
@@ -62,7 +63,7 @@ public class AuthService {
         return new LoginResponse(
                 token,
                 "Bearer",
-                TOKEN_TRAJANJE_SEKUNDE,
+                securityProperties.jwtTrajanje().getSeconds(),
                 korisnik.getId(),
                 korisnik.getUloga()
         );

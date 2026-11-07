@@ -35,4 +35,7 @@ public interface TerminRepository extends JpaRepository<Termin, Long> {
     boolean postojiVanRoka(@Param("rokId") Long rokId, @Param("od") LocalDateTime od,
                            @Param("doIskljucivo") LocalDateTime doIskljucivo);
 
+    @EntityGraph(attributePaths = {"ispit.predmet"})
+    Optional<Termin> findSaPredmetomById(Long terminId);
+
 }

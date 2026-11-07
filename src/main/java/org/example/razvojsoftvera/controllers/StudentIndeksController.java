@@ -2,7 +2,8 @@ package org.example.razvojsoftvera.controllers;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.razvojsoftvera.requests.*;
+import org.example.razvojsoftvera.requests.StudentIndeksCreateRequest;
+import org.example.razvojsoftvera.requests.StudentIndeksUpdateRequest;
 import org.example.razvojsoftvera.responses.StudentIndeksResponse;
 import org.example.razvojsoftvera.services.StudentIndeksService;
 import org.example.razvojsoftvera.utils.Converters;
