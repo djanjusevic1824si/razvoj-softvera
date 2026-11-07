@@ -1,9 +1,6 @@
 package org.example.razvojsoftvera.controllers;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.razvojsoftvera.requests.PredajaCreateRequest;
-import org.example.razvojsoftvera.requests.PredajaUpdateRequest;
 import org.example.razvojsoftvera.responses.PredajaResponse;
 import org.example.razvojsoftvera.services.PredajaService;
 import org.example.razvojsoftvera.utils.Converters;
@@ -21,23 +18,6 @@ public class PredajaController {
 
     private final PredajaService predajaService;
 
-    @PostMapping("/add")
-    @ResponseStatus(HttpStatus.CREATED)
-    public PredajaResponse save(
-            @Valid @RequestBody PredajaCreateRequest request
-    ) {
-        return Converters.toPredajaResponse(predajaService.save(request));
-    }
-
-    @PutMapping("/{id}")
-    public PredajaResponse update(
-            @PathVariable Long id,
-            @Valid @RequestBody PredajaUpdateRequest request
-    ) {
-        return Converters.toPredajaResponse(
-                predajaService.update(id, request)
-        );
-    }
 
     @GetMapping("/all")
     public List<PredajaResponse> findAll() {

@@ -43,4 +43,6 @@ public interface PredajaRepository extends JpaRepository<Predaja, Long> {
             Long radId,
             Pageable pageable
     );
+
+    Optional<Predaja> findFirstByRad_IdOrderByRedniBrojDesc(Long radId);
 }

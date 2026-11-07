@@ -34,7 +34,7 @@ public class LokalnoSkladiste implements SkladisteFajlova{
 
         String originalnoIme = fajl.getOriginalFilename();
         if (originalnoIme == null || !originalnoIme.toLowerCase().endsWith(".zip")){
-            throw new BadRequestException("Dozvoljen je samo .zip tim fajla");
+            throw new BadRequestException("Dozvoljen je samo .zip tip fajla");
         }
 
         Path cilj = root.resolve(folder)

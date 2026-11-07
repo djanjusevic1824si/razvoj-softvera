@@ -8,12 +8,15 @@ import org.example.razvojsoftvera.exceptions.ResourceNotFoundException;
 import org.example.razvojsoftvera.model.*;
 import org.example.razvojsoftvera.repositories.*;
 import org.example.razvojsoftvera.requests.PolaganjeStartRequest;
+import org.example.razvojsoftvera.requests.PredajaCreateRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -31,6 +34,9 @@ public class PolaganjeService {
     private final RadRepository radRepository;
     private final PristupService pristupService;
     private final SkladisteFajlova skladiste;
+    private final PredajaRepository predajaRepository;
+    @Value("${app.predaja.tolerancija}")
+    private Duration tolerancija;
 
 
     @Transactional
@@ -97,7 +103,45 @@ public class PolaganjeService {
 
         proveriDaTerminTraje(rad.getGrupa().getTermin());
 
+        Optional<Predaja> poslednja = predajaRepository.findFirstByRad_IdOrderByRedniBrojDesc(rad.getId());
+
+        if (poslednja.isPresent()){
+            return skladiste.ucitaj(poslednja.get().getPutanjaResenja());
+        }
         return skladiste.ucitaj(rad.getGrupa().getZadatak().getPutanjaZadatka());
+    }
+
+    @Transactional
+    public Predaja predaja(Long radId, PredajaCreateRequest request){
+        Rad rad = radRepository.findByIdForUpdate(radId)
+                .orElseThrow(() -> new ResourceNotFoundException("Ne postoji rad sa zadatim ID-jem"));
+
+        StudentIndeks indeks = aktivanIndeks();
+
+        if (!rad.getPrijava().getStudentIndeks().getId().equals(indeks.getId())){
+            throw new ForbiddenException("Ovo nije Vas rad");
+        }
+
+        if(rad.getStatusRada().equals(StatusRada.PREDAT)){
+            throw new ConflictException("Rad je vec predat");
+        }
+
+        proveriDaJePredajaDozvoljena(rad.getGrupa().getTermin());
+
+        String putanja = skladiste.sacuvaj(request.fajl(), "predaje");
+        int redniBroj = predajaRepository.findMaxRedniBrojByRadId(rad.getId()) + 1;
+
+        Predaja predaja = new Predaja();
+        predaja.setPutanjaResenja(putanja);
+        predaja.setRad(rad);
+        predaja.setRedniBroj(redniBroj);
+        predaja.setTipPredaje(request.tipPredaje());
+
+        if (request.tipPredaje().equals(TipPredaje.KONACNA)){
+            rad.setStatusRada(StatusRada.PREDAT);
+        }
+
+        return predajaRepository.saveAndFlush(predaja);
     }
 
     private void proveriDaTerminTraje(Termin termin){
@@ -116,6 +160,17 @@ public class PolaganjeService {
 
         return studentIndeksRepository.findByStudent_Korisnik_IdAndAktivanTrue(korisnikId)
                 .orElseThrow(() -> new ForbiddenException("Nemate aktivan indeks"));
+    }
+
+    private void proveriDaJePredajaDozvoljena(Termin termin){
+        LocalDateTime sada = LocalDateTime.now();
+
+        if (sada.isBefore(termin.getPocetakIzrade())){
+            throw new ConflictException("Termin jos nije poceo");
+        }
+        if (!sada.isBefore(termin.getKrajIzrade().plus(tolerancija))){
+            throw new ConflictException("Vreme za predaju je isteklo");
+        }
     }
 }
 

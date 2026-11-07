@@ -3,14 +3,13 @@ package org.example.razvojsoftvera.controllers;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.razvojsoftvera.requests.PolaganjeStartRequest;
+import org.example.razvojsoftvera.requests.PredajaCreateRequest;
 import org.example.razvojsoftvera.responses.PolaganjeResponse;
+import org.example.razvojsoftvera.responses.PredajaResponse;
 import org.example.razvojsoftvera.services.PolaganjeService;
 import org.example.razvojsoftvera.utils.Converters;
 import org.springframework.core.io.Resource;
-import org.springframework.http.ContentDisposition;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -37,6 +36,14 @@ public class PolaganjeController {
                         .build()
                         .toString())
         .body(fajl);
+    }
 
+    @PostMapping(value = "/{radId}/predaja", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    public PredajaResponse predaj(
+            @PathVariable Long radId,
+            @Valid @ModelAttribute PredajaCreateRequest request
+            ){
+        return Converters.toPredajaResponse(polaganjeService.predaja(radId, request));
     }
 }
