@@ -4,7 +4,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.razvojsoftvera.requests.PrijavaCreateRequest;
 import org.example.razvojsoftvera.requests.PrijavaUpdateRequest;
+import org.example.razvojsoftvera.requests.SpisakPrijavaRequest;
 import org.example.razvojsoftvera.responses.PrijavaResponse;
+import org.example.razvojsoftvera.responses.SpisakPrijavaResponse;
 import org.example.razvojsoftvera.services.PrijavaService;
 import org.example.razvojsoftvera.utils.Converters;
 import org.springframework.data.domain.Page;
@@ -72,4 +74,13 @@ public class PrijavaController {
     public boolean jePrijavljen(@PathVariable Long ispitId, @PathVariable Long studentIndeksId) {
         return prijavaService.jePrijavljen(ispitId, studentIndeksId);
     }
+
+    @PostMapping("/ispit/{ispitId}/unesi-spisak")
+    public SpisakPrijavaResponse unesiSpisak(
+            @PathVariable Long ispitId,
+            @Valid @RequestBody SpisakPrijavaRequest request
+            ){
+        return prijavaService.unesiSpisak(ispitId, request);
+    }
+
 }

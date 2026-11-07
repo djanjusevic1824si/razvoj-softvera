@@ -1,10 +1,12 @@
 package org.example.razvojsoftvera.repositories;
 
 import org.example.razvojsoftvera.model.StudentIndeks;
+import org.example.razvojsoftvera.requests.StavkaSpiska;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
@@ -46,5 +48,15 @@ public interface StudentIndeksRepository
     boolean existsByIdAndStudent_Korisnik_Id(
             Long indeksId,
             Long korisnikId
+    );
+
+    @Query("""
+            select si from StudentIndeks si
+            where upper(si.studijskiProgram.oznaka) = upper(:oznaka)
+            and si.broj = :broj
+            and si.godinaUpisa = :godinaUpisa 
+""")
+    Optional<StudentIndeks> nadjiPoOznaci(
+            String oznaka, Integer broj, Integer godinaUpisa
     );
 }

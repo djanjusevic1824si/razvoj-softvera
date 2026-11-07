@@ -42,4 +42,9 @@ public interface DrziPredmetRepository
             Long nastavnikId,
             Pageable pageable
     );
+
+    boolean existsByPredmet_IdAndStudijskiProgram_Id(
+            Long drziPredmetId,
+            Long studijskiProgramId
+    );
 }

@@ -2,6 +2,7 @@ package org.example.razvojsoftvera.exceptions;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.*;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -50,6 +51,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ProblemDetail body = ex.getBody();
         body.setDetail("Neispravni podaci u zahtevu");
         body.setProperty("errors", errors);
+        return handleExceptionInternal(ex, body, headers, status, request);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(
+            HttpMessageNotReadableException ex, HttpHeaders headers,
+            HttpStatusCode status, WebRequest request) {
+
+        ProblemDetail body = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_REQUEST,
+                "Neispravan JSON: " + ex.getMostSpecificCause().getMessage()
+        );
         return handleExceptionInternal(ex, body, headers, status, request);
     }
 }

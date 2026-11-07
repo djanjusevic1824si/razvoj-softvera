@@ -7,12 +7,12 @@ import org.example.razvojsoftvera.exceptions.ResourceNotFoundException;
 import org.example.razvojsoftvera.model.Ispit;
 import org.example.razvojsoftvera.model.Prijava;
 import org.example.razvojsoftvera.model.StudentIndeks;
-import org.example.razvojsoftvera.repositories.IspitRepository;
-import org.example.razvojsoftvera.repositories.PrijavaRepository;
-import org.example.razvojsoftvera.repositories.RadRepository;
-import org.example.razvojsoftvera.repositories.StudentIndeksRepository;
+import org.example.razvojsoftvera.repositories.*;
 import org.example.razvojsoftvera.requests.PrijavaCreateRequest;
 import org.example.razvojsoftvera.requests.PrijavaUpdateRequest;
+import org.example.razvojsoftvera.requests.SpisakPrijavaRequest;
+import org.example.razvojsoftvera.requests.StavkaSpiska;
+import org.example.razvojsoftvera.responses.SpisakPrijavaResponse;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +20,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +33,7 @@ public class PrijavaService {
     private final StudentIndeksRepository studentIndeksRepository;
     private final IspitRepository ispitRepository;
     private final RadRepository radRepository;
+    private final DrziPredmetRepository drziPredmetRepository;
 
     @Transactional
     public Prijava save(PrijavaCreateRequest request) {
@@ -51,6 +54,11 @@ public class PrijavaService {
             throw new BadRequestException(
                     "Studentski indeks nije aktivan"
             );
+        }
+
+        if (!drziPredmetRepository.existsByPredmet_IdAndStudijskiProgram_Id(
+                ispit.getPredmet().getId(), indeks.getStudijskiProgram().getId())) {
+            throw new BadRequestException("Predmet se ne drzi na programu ovog indeksa");
         }
 
         boolean postoji = prijavaRepository.existsByStudentIndeks_IdAndIspit_Id(
@@ -136,6 +144,61 @@ public class PrijavaService {
                     "Prijavu nije moguce izmeniti zbog duplikata ili konflikta povezanih podataka"
             );
         }
+    }
+
+    @Transactional
+    @PreAuthorize("hasRole('NASTAVNIK')")
+    public SpisakPrijavaResponse unesiSpisak(Long ispitId, SpisakPrijavaRequest request){
+        Ispit ispit = ispitRepository.findById(ispitId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Ispit sa ID-jem " + ispitId + " ne postoji"
+                ));
+
+        int dodato = 0;
+        List<String> greske = new ArrayList<>();
+
+        for(StavkaSpiska s: request.spisakIndeksa()){
+            String oznaka = s.program() + " " + s.broj() + "/" + s.godinaUpisa();
+
+            Optional<StudentIndeks> pronadjen = studentIndeksRepository.nadjiPoOznaci(
+                            s.program(),
+                            s.broj(),
+                            s.godinaUpisa()
+                    );
+            if (pronadjen.isEmpty()){
+                greske.add(oznaka + ": indeks ne postoji");
+                continue;
+            }
+
+            StudentIndeks indeks = pronadjen.get();
+
+            if (!indeks.isAktivan()){
+                greske.add(oznaka + ": indeks nije aktivan");
+                continue;
+            }
+
+            if(!drziPredmetRepository.existsByPredmet_IdAndStudijskiProgram_Id(
+                    ispit.getPredmet().getId(), indeks.getStudijskiProgram().getId()
+            )){
+                greske.add(oznaka + ": predmet se ne drzi na programu ovog indeksa");
+                continue;
+            }
+
+            if (prijavaRepository.existsByStudentIndeks_IdAndIspit_Id(
+                    indeks.getId(), ispit.getId()
+            )){
+                greske.add(oznaka + ": indeks je vec prijavljen na ispit");
+                continue;
+            }
+
+            Prijava prijava = new Prijava();
+            prijava.setStudentIndeks(indeks);
+            prijava.setIspit(ispit);
+            prijavaRepository.save(prijava);
+            dodato++;
+        }
+
+        return new SpisakPrijavaResponse(dodato, greske);
     }
 
     public List<Prijava> findAll() {
