@@ -2,6 +2,7 @@ package org.example.razvojsoftvera.repositories;
 
 import jakarta.persistence.LockModeType;
 import org.example.razvojsoftvera.model.Rad;
+import org.example.razvojsoftvera.model.StatusRada;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -10,6 +11,7 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,4 +45,11 @@ public interface RadRepository extends JpaRepository<Rad, Long> {
 
     @EntityGraph(attributePaths = {"prijava", "grupa.termin.ispit.predmet", "grupa.zadatak"})
     Optional<Rad> findByPrijava_Id(Long prijavaId);
+
+    @Query("""
+        select r from Rad r
+        where r.statusRada = :status
+          and r.grupa.termin.krajIzrade < :granica
+        """)
+    List<Rad> nadjiIstekleRadove(StatusRada status, LocalDateTime granica);
 }
