@@ -9,11 +9,14 @@ import org.example.razvojsoftvera.repositories.*;
 import org.example.razvojsoftvera.requests.RadCreateRequest;
 import org.example.razvojsoftvera.requests.RadOcenaRequest;
 import org.example.razvojsoftvera.requests.RadUpdateRequest;
+import org.springframework.core.io.Resource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -29,6 +32,9 @@ public class RadService {
     private final GrupaRepository grupaRepository;
     private final NastavnikRepository nastavnikRepository;
     private final IspitRepository ispitRepository;
+    private final PredajaRepository predajaRepository;
+    private final SkladisteFajlova skladiste;
+    private final RequestMappingHandlerAdapter requestMappingHandlerAdapter;
 
     @Transactional
     public Rad save(RadCreateRequest request) {
@@ -179,5 +185,20 @@ public class RadService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Rad sa id " + id + " ne postoji"
                 ));
+    }
+
+    @PreAuthorize("hasRole('NASTAVNIK')")
+    public Resource preuzmiResenje(Long radId){
+        Rad rad = radRepository.findById(radId)
+                .orElseThrow(() -> new ResourceNotFoundException("Rad sa id-jem: " + radId + " ne postoji"));
+
+        if (rad.getStatusRada() != StatusRada.PREDAT){
+            throw new ConflictException("Rad jos uvek nije predat");
+        }
+
+        Predaja konacna = predajaRepository.findByRad_IdAndTipPredaje(radId, TipPredaje.KONACNA)
+                .orElseThrow(() -> new ResourceNotFoundException("Rad nema konacnu predaju"));
+
+        return skladiste.ucitaj(konacna.getPutanjaResenja());
     }
 }

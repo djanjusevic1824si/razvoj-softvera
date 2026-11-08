@@ -45,4 +45,6 @@ public interface PredajaRepository extends JpaRepository<Predaja, Long> {
     );
 
     Optional<Predaja> findFirstByRad_IdOrderByRedniBrojDesc(Long radId);
+
+    Optional<Predaja> findByRad_IdAndTipPredaje (Long radId, TipPredaje tipPredaje);
 }
