@@ -7,6 +7,7 @@ import org.example.razvojsoftvera.requests.IspitUpdateRequest;
 import org.example.razvojsoftvera.responses.IspitResponse;
 import org.example.razvojsoftvera.services.IspitService;
 import org.example.razvojsoftvera.utils.Converters;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -46,7 +47,7 @@ public class IspitController {
     }
 
     @GetMapping("/svi")
-    public Page<IspitResponse> findAll(Pageable pageable) {
+    public Page<IspitResponse> findAll(@ParameterObject Pageable pageable) {
         return ispitService.findAll(pageable)
                 .map(Converters::toIspitResponse);
     }
@@ -59,7 +60,7 @@ public class IspitController {
     @GetMapping("/rok/{ispitniRokId}")
     public Page<IspitResponse> findByIspitniRok(
             @PathVariable Long ispitniRokId,
-            Pageable pageable
+            @ParameterObject Pageable pageable
     ) {
         return ispitService.findByIspitniRok(ispitniRokId, pageable)
                 .map(Converters::toIspitResponse);

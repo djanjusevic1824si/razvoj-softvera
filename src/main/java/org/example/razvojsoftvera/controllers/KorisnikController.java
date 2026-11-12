@@ -9,6 +9,7 @@ import org.example.razvojsoftvera.requests.KorisnikUpdateRequest;
 import org.example.razvojsoftvera.responses.KorisnikResponse;
 import org.example.razvojsoftvera.services.KorisnikService;
 import org.example.razvojsoftvera.utils.Converters;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -38,7 +39,7 @@ public class KorisnikController {
     }
 
     @GetMapping("/svi")
-    public Page<KorisnikResponse> findAll(Pageable pageable) {
+    public Page<KorisnikResponse> findAll(@ParameterObject Pageable pageable) {
         return korisnikService.findAll(pageable)
                 .map(Converters::toKorisnikResponse);
     }
@@ -67,7 +68,7 @@ public class KorisnikController {
     @GetMapping("/by-uloga")
     public Page<KorisnikResponse> findByUloga(
             @RequestParam Uloga uloga,
-            Pageable pageable
+            @ParameterObject Pageable pageable
     ) {
         return korisnikService.findByUloga(uloga, pageable)
                 .map(Converters::toKorisnikResponse);

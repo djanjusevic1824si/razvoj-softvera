@@ -9,6 +9,7 @@ import org.example.razvojsoftvera.responses.PrijavaResponse;
 import org.example.razvojsoftvera.responses.SpisakPrijavaResponse;
 import org.example.razvojsoftvera.services.PrijavaService;
 import org.example.razvojsoftvera.utils.Converters;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -35,7 +36,7 @@ public class PrijavaController {
     }
 
     @GetMapping("/svi")
-    public Page<PrijavaResponse> findAll(Pageable pageable) {
+    public Page<PrijavaResponse> findAll(@ParameterObject Pageable pageable) {
         return prijavaService.findAll(pageable).map(Converters::toPrijavaResponse);
     }
 
@@ -56,12 +57,12 @@ public class PrijavaController {
     }
 
     @GetMapping("/ispit/{ispitId}")
-    public Page<PrijavaResponse> findByIspit(@PathVariable Long ispitId, Pageable pageable) {
+    public Page<PrijavaResponse> findByIspit(@PathVariable Long ispitId, @ParameterObject Pageable pageable) {
         return prijavaService.findByIspit(ispitId, pageable).map(Converters::toPrijavaResponse);
     }
 
     @GetMapping("/student-indeks/{studentIndeksId}")
-    public Page<PrijavaResponse> findByStudentIndeks(@PathVariable Long studentIndeksId, Pageable pageable) {
+    public Page<PrijavaResponse> findByStudentIndeks(@PathVariable Long studentIndeksId, @ParameterObject Pageable pageable) {
         return prijavaService.findByStudentIndeks(studentIndeksId, pageable).map(Converters::toPrijavaResponse);
     }
 

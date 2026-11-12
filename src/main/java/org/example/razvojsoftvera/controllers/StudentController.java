@@ -8,6 +8,7 @@ import org.example.razvojsoftvera.responses.StudentListResponse;
 import org.example.razvojsoftvera.responses.StudentResponse;
 import org.example.razvojsoftvera.services.StudentService;
 import org.example.razvojsoftvera.utils.Converters;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -37,7 +38,7 @@ public class StudentController {
     }
 
     @GetMapping("/svi")
-    public Page<StudentListResponse> findAll(Pageable pageable) {
+    public Page<StudentListResponse> findAll(@ParameterObject Pageable pageable) {
         return studentService.findAll(pageable)
                 .map(Converters::toStudentListResponse);
     }
@@ -76,7 +77,7 @@ public class StudentController {
     public Page<StudentResponse> search(
             @RequestParam(required = false) String ime,
             @RequestParam(required = false) String prezime,
-            Pageable pageable
+            @ParameterObject Pageable pageable
     ) {
         return studentService.findByImeAndPrezime(ime, prezime, pageable)
                 .map(Converters::toStudentResponse);

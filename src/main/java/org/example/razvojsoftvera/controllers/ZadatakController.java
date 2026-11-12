@@ -7,6 +7,7 @@ import org.example.razvojsoftvera.requests.ZadatakUpdateRequest;
 import org.example.razvojsoftvera.responses.ZadatakResponse;
 import org.example.razvojsoftvera.services.ZadatakService;
 import org.example.razvojsoftvera.utils.Converters;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,7 +35,7 @@ public class ZadatakController {
     }
 
     @GetMapping("/svi")
-    public Page<ZadatakResponse> findAll(Pageable pageable) {
+    public Page<ZadatakResponse> findAll(@ParameterObject Pageable pageable) {
         return zadatakService.findAll(pageable).map(Converters::toZadatakResponse);
     }
 
@@ -69,12 +70,12 @@ public class ZadatakController {
     }
 
     @GetMapping("/nastavnik/{nastavnikId}")
-    public Page<ZadatakResponse> findByNastavnik(@PathVariable Long nastavnikId, Pageable pageable) {
+    public Page<ZadatakResponse> findByNastavnik(@PathVariable Long nastavnikId, @ParameterObject Pageable pageable) {
         return zadatakService.findByNastavnik(nastavnikId, pageable).map(Converters::toZadatakResponse);
     }
 
     @GetMapping("/search")
-    public Page<ZadatakResponse> search(@RequestParam String naziv, Pageable pageable) {
+    public Page<ZadatakResponse> search(@RequestParam String naziv, @ParameterObject Pageable pageable) {
         return zadatakService.search(naziv, pageable).map(Converters::toZadatakResponse);
     }
 }

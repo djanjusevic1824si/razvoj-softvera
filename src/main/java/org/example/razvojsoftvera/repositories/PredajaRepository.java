@@ -2,6 +2,7 @@ package org.example.razvojsoftvera.repositories;
 
 import org.example.razvojsoftvera.model.Predaja;
 import org.example.razvojsoftvera.model.TipPredaje;
+import org.example.razvojsoftvera.responses.ResenjeResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -47,4 +48,19 @@ public interface PredajaRepository extends JpaRepository<Predaja, Long> {
     Optional<Predaja> findFirstByRad_IdOrderByRedniBrojDesc(Long radId);
 
     Optional<Predaja> findByRad_IdAndTipPredaje (Long radId, TipPredaje tipPredaje);
+
+
+    @Query("select new org.example.razvojsoftvera.responses.ResenjeResponse(" +
+            "            pd.id, r.id, sp.oznaka, si.broj, si.godinaUpisa, st.ime, st.prezime, g.naziv," +
+            "            pd.putanjaResenja, pd.vreme, r.poeni, r.vremeOcenjivanja) from Predaja pd" +
+            "        join pd.rad r" +
+            "        join r.prijava pr" +
+            "        join pr.studentIndeks si" +
+            "        join si.student st" +
+            "        join si.studijskiProgram sp" +
+            "        join r.grupa g" +
+            "        where pd.tipPredaje = org.example.razvojsoftvera.model.TipPredaje.KONACNA" +
+            "          and pr.ispit.id = :ispitId" +
+            "          and (:grupaId is null or g.id = :grupaId) order by g.naziv, st.prezime, st.ime, pd.id")
+    List<ResenjeResponse> konacnePredajeSve(@Param("ispitId") Long ispitId, @Param("grupaId") Long grupaId);
 }

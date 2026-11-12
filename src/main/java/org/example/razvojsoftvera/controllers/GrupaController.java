@@ -7,6 +7,7 @@ import org.example.razvojsoftvera.requests.GrupaUpdateRequest;
 import org.example.razvojsoftvera.responses.GrupaResponse;
 import org.example.razvojsoftvera.services.GrupaService;
 import org.example.razvojsoftvera.utils.Converters;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -33,7 +34,7 @@ public class GrupaController {
     }
 
     @GetMapping("/svi")
-    public Page<GrupaResponse> findAll(Pageable pageable) {
+    public Page<GrupaResponse> findAll(@ParameterObject Pageable pageable) {
         return grupaService.findAll(pageable).map(Converters::toGrupaResponse);
     }
 
@@ -55,7 +56,7 @@ public class GrupaController {
     }
 
     @GetMapping("/termin/{terminId}")
-    public Page<GrupaResponse> findByTermin(@PathVariable Long terminId, Pageable pageable) {
+    public Page<GrupaResponse> findByTermin(@PathVariable Long terminId, @ParameterObject Pageable pageable) {
         return grupaService.findByTermin(terminId, pageable).map(Converters::toGrupaResponse);
     }
 }

@@ -7,6 +7,7 @@ import org.example.razvojsoftvera.requests.TerminUpdateRequest;
 import org.example.razvojsoftvera.responses.TerminResponse;
 import org.example.razvojsoftvera.services.TerminService;
 import org.example.razvojsoftvera.utils.Converters;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -33,7 +34,7 @@ public class TerminController {
     }
 
     @GetMapping("/svi")
-    public Page<TerminResponse> findAll(Pageable pageable) {
+    public Page<TerminResponse> findAll(@ParameterObject Pageable pageable) {
         return terminService.findAll(pageable).map(Converters::toTerminResponse);
     }
 
@@ -54,7 +55,7 @@ public class TerminController {
     }
 
     @GetMapping("/ispit/{ispitId}")
-    public Page<TerminResponse> findByIspit(@PathVariable Long ispitId, Pageable pageable) {
+    public Page<TerminResponse> findByIspit(@PathVariable Long ispitId, @ParameterObject Pageable pageable) {
         return terminService.findByIspit(ispitId, pageable).map(Converters::toTerminResponse);
     }
 }

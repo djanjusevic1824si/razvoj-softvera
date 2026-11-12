@@ -7,6 +7,7 @@ import org.example.razvojsoftvera.requests.IspitniRokUpdateRequest;
 import org.example.razvojsoftvera.responses.IspitniRokResponse;
 import org.example.razvojsoftvera.services.IspitniRokService;
 import org.example.razvojsoftvera.utils.Converters;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -35,7 +36,7 @@ public class IspitniRokController {
     }
 
     @GetMapping("/svi")
-    public Page<IspitniRokResponse> findAll(Pageable pageable) {
+    public Page<IspitniRokResponse> findAll(@ParameterObject Pageable pageable) {
         return ispitniRokService.findAll(pageable).map(Converters::toIspitniRokResponse);
     }
 
@@ -56,12 +57,12 @@ public class IspitniRokController {
     }
 
     @GetMapping("/skolska-godina")
-    public Page<IspitniRokResponse> findBySkolskaGodina(@RequestParam String skolskaGodina, Pageable pageable) {
+    public Page<IspitniRokResponse> findBySkolskaGodina(@RequestParam String skolskaGodina, @ParameterObject Pageable pageable) {
         return ispitniRokService.findBySkolskaGodina(skolskaGodina, pageable).map(Converters::toIspitniRokResponse);
     }
 
     @GetMapping("/search")
-    public Page<IspitniRokResponse> search(@RequestParam String naziv, Pageable pageable) {
+    public Page<IspitniRokResponse> search(@RequestParam String naziv, @ParameterObject Pageable pageable) {
         return ispitniRokService.search(naziv, pageable).map(Converters::toIspitniRokResponse);
     }
 

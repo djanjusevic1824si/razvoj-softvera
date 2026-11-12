@@ -7,6 +7,7 @@ import org.example.razvojsoftvera.requests.DrziPredmetUpdateRequest;
 import org.example.razvojsoftvera.responses.DrziPredmetResponse;
 import org.example.razvojsoftvera.services.DrziPredmetService;
 import org.example.razvojsoftvera.utils.Converters;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -50,7 +51,8 @@ public class DrziPredmetController {
     }
 
     @GetMapping("/svi")
-    public Page<DrziPredmetResponse> findAll(Pageable pageable) {
+    public Page<DrziPredmetResponse> findAll(
+            @ParameterObject Pageable pageable) {
         return drziPredmetService.findAll(pageable)
                 .map(Converters::toDrziPredmetResponse);
     }

@@ -1,0 +1,70 @@
+package org.example.razvojsoftvera.services;
+
+import lombok.RequiredArgsConstructor;
+import org.example.razvojsoftvera.exceptions.BadRequestException;
+import org.example.razvojsoftvera.exceptions.ResourceNotFoundException;
+import org.example.razvojsoftvera.model.*;
+import org.example.razvojsoftvera.repositories.NastavnikRepository;
+import org.example.razvojsoftvera.repositories.PredajaRepository;
+import org.example.razvojsoftvera.repositories.RadRepository;
+import org.example.razvojsoftvera.requests.OcenaRequest;
+import org.example.razvojsoftvera.responses.ResenjeResponse;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
+@Service
+@PreAuthorize("hasRole('NASTAVNIK')")
+public class ResenjaService {
+
+    private final PredajaRepository predajaRepository;
+    private final NastavnikRepository nastavnikRepository;
+    private final RadRepository radRepository;
+    private final PristupService pristupService;
+
+
+    public List<ResenjeResponse> sve(Long ispitId, Long grupaId) {
+        return predajaRepository.konacnePredajeSve(ispitId, grupaId);
+    }
+
+    @Transactional
+    public Rad oceni(Long predajaId, OcenaRequest z) {
+        Predaja predaja = predajaRepository.findById(predajaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Predaja sa id " + predajaId + " ne postoji"));
+
+        if (predaja.getTipPredaje() != TipPredaje.KONACNA)
+            throw new BadRequestException("Ocenjuje se samo konačna predaja");
+
+        Rad rad = predaja.getRad();
+        if (rad.getStatusRada() != StatusRada.PREDAT)
+            throw new BadRequestException("Rad nije predat");
+
+        Nastavnik nastavnik = nastavnikRepository.findById(z.nastavnikId())
+                .orElseThrow(() -> new ResourceNotFoundException("Nastavnik sa id " + z.nastavnikId() + " ne postoji"));
+
+        rad.setPoeni(z.poeni());
+        rad.setOcenioNastavnik(nastavnik);
+        rad.setVremeOcenjivanja(LocalDateTime.now());
+
+        return rad;
+    }
+
+    @PreAuthorize("""
+        hasRole('NASTAVNIK')
+        or (
+            hasRole('STUDENT')
+            and @pristupService.jeSvojeResenje(#ispitId, authentication)
+        )
+        """)
+    public Rad mojeResenje(Long ispitId){
+        Long studentId = pristupService.studentId(SecurityContextHolder.getContext().getAuthentication());
+        return radRepository.findByIspitIdAndStudentId(ispitId, studentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Ne postoji rad trazenog studenta"));
+    }
+}

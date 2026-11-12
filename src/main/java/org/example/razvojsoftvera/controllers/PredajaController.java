@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.razvojsoftvera.responses.PredajaResponse;
 import org.example.razvojsoftvera.services.PredajaService;
 import org.example.razvojsoftvera.utils.Converters;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -28,7 +29,7 @@ public class PredajaController {
     }
 
     @GetMapping("/svi")
-    public Page<PredajaResponse> findAll(Pageable pageable) {
+    public Page<PredajaResponse> findAll(@ParameterObject Pageable pageable) {
         return predajaService.findAll(pageable)
                 .map(Converters::toPredajaResponse);
     }
@@ -41,7 +42,7 @@ public class PredajaController {
     @GetMapping("/rad/{radId}")
     public Page<PredajaResponse> findByRad(
             @PathVariable Long radId,
-            Pageable pageable
+            @ParameterObject Pageable pageable
     ) {
         return predajaService.findByRad(radId, pageable)
                 .map(Converters::toPredajaResponse);

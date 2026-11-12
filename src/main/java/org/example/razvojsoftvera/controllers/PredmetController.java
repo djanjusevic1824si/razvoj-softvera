@@ -6,6 +6,7 @@ import org.example.razvojsoftvera.requests.PredmetRequest;
 import org.example.razvojsoftvera.responses.PredmetResponse;
 import org.example.razvojsoftvera.services.PredmetService;
 import org.example.razvojsoftvera.utils.Converters;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -35,7 +36,7 @@ public class PredmetController {
     }
 
     @GetMapping("/svi")
-    public Page<PredmetResponse> findAll(Pageable pageable) {
+    public Page<PredmetResponse> findAll(@ParameterObject Pageable pageable) {
         return predmetService.findAll(pageable)
                 .map(Converters::toPredmetResponse);
     }
@@ -79,7 +80,7 @@ public class PredmetController {
     public Page<PredmetResponse> search(
             @RequestParam(required = false) String sifra,
             @RequestParam(required = false) String naziv,
-            Pageable pageable
+            @ParameterObject Pageable pageable
     ) {
         return predmetService.search(sifra, naziv, pageable)
                 .map(Converters::toPredmetResponse);

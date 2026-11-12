@@ -7,6 +7,7 @@ import org.example.razvojsoftvera.requests.StudentIndeksUpdateRequest;
 import org.example.razvojsoftvera.responses.StudentIndeksResponse;
 import org.example.razvojsoftvera.services.StudentIndeksService;
 import org.example.razvojsoftvera.utils.Converters;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -50,7 +51,7 @@ public class StudentIndeksController {
     }
 
     @GetMapping("/svi")
-    public Page<StudentIndeksResponse> findAll(Pageable pageable) {
+    public Page<StudentIndeksResponse> findAll(@ParameterObject Pageable pageable) {
         return studentIndeksService.findAll(pageable)
                 .map(Converters::toStudentIndeksResponse);
     }
@@ -65,7 +66,7 @@ public class StudentIndeksController {
     @GetMapping("/student/{studentId}")
     public Page<StudentIndeksResponse> findByStudent(
             @PathVariable Long studentId,
-            Pageable pageable
+            @ParameterObject Pageable pageable
     ) {
         return studentIndeksService.findByStudent(studentId, pageable)
                 .map(Converters::toStudentIndeksResponse);

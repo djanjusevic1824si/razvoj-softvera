@@ -8,6 +8,7 @@ import org.example.razvojsoftvera.requests.RadUpdateRequest;
 import org.example.razvojsoftvera.responses.RadResponse;
 import org.example.razvojsoftvera.services.RadService;
 import org.example.razvojsoftvera.utils.Converters;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -56,7 +57,7 @@ public class RadController {
     }
 
     @GetMapping("/svi")
-    public Page<RadResponse> findAll(Pageable pageable) {
+    public Page<RadResponse> findAll(@ParameterObject Pageable pageable) {
         return radService.findAll(pageable)
                 .map(Converters::toRadResponse);
     }
@@ -69,7 +70,7 @@ public class RadController {
     @GetMapping("/ispit/{ispitId}")
     public Page<RadResponse> findByIspit(
             @PathVariable Long ispitId,
-            Pageable pageable
+            @ParameterObject Pageable pageable
     ) {
         return radService.findByIspit(ispitId, pageable)
                 .map(Converters::toRadResponse);

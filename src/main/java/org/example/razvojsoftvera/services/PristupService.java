@@ -1,8 +1,10 @@
 package org.example.razvojsoftvera.services;
 
 import lombok.RequiredArgsConstructor;
+import org.example.razvojsoftvera.exceptions.ResourceNotFoundException;
 import org.example.razvojsoftvera.exceptions.UnauthorizedException;
 import org.example.razvojsoftvera.repositories.PrijavaRepository;
+import org.example.razvojsoftvera.repositories.RadRepository;
 import org.example.razvojsoftvera.repositories.StudentIndeksRepository;
 import org.example.razvojsoftvera.repositories.StudentRepository;
 import org.springframework.security.core.Authentication;
@@ -19,6 +21,7 @@ public class PristupService {
     private final StudentRepository studentRepository;
     private final StudentIndeksRepository studentIndeksRepository;
     private final PrijavaRepository prijavaRepository;
+    private final RadRepository radRepository;
 
     public boolean jeSvojProfil(
             Long studentId,
@@ -34,6 +37,18 @@ public class PristupService {
                 studentId,
                 korisnikId
         );
+    }
+
+    public boolean jeSvojeResenje(
+            Long ispitId,
+            Authentication authentication
+    ){
+        Long korisnikId = korisnikIdIzTokena(authentication);
+
+        if(korisnikId == null)
+            return false;
+
+        return radRepository.existsZaIspitIKorisnika(ispitId, korisnikId);
     }
 
     public boolean jeSvojIndeks(
@@ -102,7 +117,7 @@ public class PristupService {
             return null;
         }
     }
-
+    
     public Long ulogovaniStudentKorisnikId(){
         Long korisnikId = korisnikIdIzTokena(
                 SecurityContextHolder.getContext().getAuthentication()
@@ -112,5 +127,14 @@ public class PristupService {
         }
 
         return korisnikId;
+    }
+
+    public Long studentId(Authentication authentication) {
+        Long korisnikId = korisnikIdIzTokena(authentication);
+        if (korisnikId == null) {
+            throw new ResourceNotFoundException("Korisnik ne postoji");
+        }
+        return studentRepository.findIdByKorisnikId(korisnikId)
+                .orElseThrow(() -> new UnauthorizedException("Korisnik nije student"));
     }
 }

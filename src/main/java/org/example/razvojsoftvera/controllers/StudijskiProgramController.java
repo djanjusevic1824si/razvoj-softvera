@@ -6,6 +6,7 @@ import org.example.razvojsoftvera.requests.StudijskiProgramRequest;
 import org.example.razvojsoftvera.responses.StudijskiProgramResponse;
 import org.example.razvojsoftvera.services.StudijskiProgramService;
 import org.example.razvojsoftvera.utils.Converters;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -39,7 +40,7 @@ public class StudijskiProgramController {
     }
 
     @GetMapping("/svi")
-    public Page<StudijskiProgramResponse> findAll(Pageable pageable) {
+    public Page<StudijskiProgramResponse> findAll(@ParameterObject Pageable pageable) {
         return studijskiProgramService.findAll(pageable)
                 .map(Converters::toStudijskiProgramResponse);
     }
@@ -76,7 +77,7 @@ public class StudijskiProgramController {
     public Page<StudijskiProgramResponse> search(
             @RequestParam(required = false) String oznaka,
             @RequestParam(required = false) String naziv,
-            Pageable pageable
+            @ParameterObject Pageable pageable
     ) {
         return studijskiProgramService.search(oznaka, naziv, pageable)
                 .map(Converters::toStudijskiProgramResponse);

@@ -7,6 +7,7 @@ import org.example.razvojsoftvera.requests.KomentarUpdateRequest;
 import org.example.razvojsoftvera.responses.KomentarResponse;
 import org.example.razvojsoftvera.services.KomentarService;
 import org.example.razvojsoftvera.utils.Converters;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -50,7 +51,7 @@ public class KomentarController {
     }
 
     @GetMapping("/svi")
-    public Page<KomentarResponse> findAll(Pageable pageable) {
+    public Page<KomentarResponse> findAll(@ParameterObject Pageable pageable) {
         return komentarService.findAll(pageable)
                 .map(Converters::toKomentarResponse);
     }
@@ -65,7 +66,7 @@ public class KomentarController {
     @GetMapping("/rad/{radId}")
     public Page<KomentarResponse> findByRad(
             @PathVariable Long radId,
-            Pageable pageable
+            @ParameterObject Pageable pageable
     ) {
         return komentarService.findByRad(radId, pageable)
                 .map(Converters::toKomentarResponse);
