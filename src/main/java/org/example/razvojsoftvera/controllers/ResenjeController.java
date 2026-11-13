@@ -22,7 +22,6 @@ import java.util.zip.ZipOutputStream;
 
 @RestController
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('NASTAVNIK')")
 public class ResenjeController {
 
     private final ResenjaService service;

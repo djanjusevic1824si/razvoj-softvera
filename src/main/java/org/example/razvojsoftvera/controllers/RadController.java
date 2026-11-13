@@ -40,14 +40,6 @@ public class RadController {
         return Converters.toRadResponse(radService.update(id, request));
     }
 
-    @PutMapping("/{id}/ocena")
-    public RadResponse oceni(
-            @PathVariable Long id,
-            @Valid @RequestBody RadOcenaRequest request
-    ) {
-        return Converters.toRadResponse(radService.oceni(id, request));
-    }
-
     @GetMapping("/all")
     public List<RadResponse> findAll() {
         return Converters.toList(

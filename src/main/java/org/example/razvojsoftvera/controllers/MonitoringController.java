@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.example.razvojsoftvera.model.StatusRada;
 import org.example.razvojsoftvera.responses.MonitoringDto;
 import org.example.razvojsoftvera.services.MonitoringService;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,7 +17,6 @@ import java.util.List;
 public class MonitoringController {
     private final MonitoringService service;
 
-    @PreAuthorize("hasRole('NASTAVNIK')")
     @GetMapping
     public List<MonitoringDto> pregled(
             @RequestParam(required = false) Long ispitId,

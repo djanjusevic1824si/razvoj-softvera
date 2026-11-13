@@ -98,42 +98,6 @@ public class RadService {
         }
     }
 
-    @Transactional
-    public Rad oceni(Long id, RadOcenaRequest request) {
-        Rad rad = findByIdForUpdateOrThrow(id);
-
-        if (rad.getStatusRada() != StatusRada.PREDAT) {
-            throw new ConflictException(
-                    "Moguce je oceniti samo konacno predat rad"
-            );
-        }
-
-        if (request.poeni().signum() < 0
-                || request.poeni().compareTo(new BigDecimal("130")) > 0
-                || request.poeni().stripTrailingZeros().scale() > 1) {
-            throw new BadRequestException(
-                    "Poeni moraju biti od 0 do 130 sa najvise jednom decimalom"
-            );
-        }
-
-        Nastavnik nastavnik = nastavnikRepository.findById(request.nastavnikId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Nastavnik ne postoji"
-                ));
-
-        rad.setPoeni(request.poeni());
-        rad.setOcenioNastavnik(nastavnik);
-        rad.setVremeOcenjivanja(LocalDateTime.now());
-
-        try {
-            return radRepository.saveAndFlush(rad);
-        } catch (DataIntegrityViolationException ex) {
-            throw new ConflictException(
-                    "Ocenu nije moguce sacuvati zbog konflikta podataka"
-            );
-        }
-    }
-
     public List<Rad> findAll() {
         return radRepository.findAll();
     }

@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -45,6 +46,14 @@ public class ResenjaService {
         if (rad.getStatusRada() != StatusRada.PREDAT)
             throw new BadRequestException("Rad nije predat");
 
+        if (z.poeni().signum() < 0
+                || z.poeni().compareTo(new BigDecimal("130")) > 0
+                || z.poeni().stripTrailingZeros().scale() > 1) {
+            throw new BadRequestException(
+                    "Poeni moraju biti od 0 do 130 sa najvise jednom decimalom"
+            );
+        }
+
         Nastavnik nastavnik = nastavnikRepository.findById(z.nastavnikId())
                 .orElseThrow(() -> new ResourceNotFoundException("Nastavnik sa id " + z.nastavnikId() + " ne postoji"));
 
@@ -59,7 +68,7 @@ public class ResenjaService {
         hasRole('NASTAVNIK')
         or (
             hasRole('STUDENT')
-            and @pristupService.jeSvojeResenje(#ispitId, authentication)
+            and @pristupService.jeSvojeResenje(#p0, authentication)
         )
         """)
     public Rad mojeResenje(Long ispitId){
