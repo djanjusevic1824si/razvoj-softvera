@@ -13,8 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -34,20 +34,21 @@ public class ResenjeController {
     @GetMapping("/api/ispiti/{ispitId}/resenja/preuzmi")
     public ResponseEntity<StreamingResponseBody> preuzmi(@PathVariable Long ispitId,
                                                          @RequestParam(required = false) Long grupaId) {
-        List<ResenjeResponse> lista = service.sve(ispitId, grupaId);
+
+        ResenjaService.SadrzajZipa sadrzaj = service.pripremiZip(ispitId, grupaId);
 
         StreamingResponseBody body = out -> {
             try (ZipOutputStream zip = new ZipOutputStream(out)) {
-                for (ResenjeResponse r : lista) {
-                    Path p = Path.of(r.putanjaResenja()).toAbsolutePath().normalize();
-
-                    String entry = String.join("/",
-                            (r.grupa()),
-                            (r.studijskiProgram() + "_" + r.broj() + "_" + r.godinaUpisa() + "_" + r.prezime() + "_" + r.ime()),
-                            (p.getFileName().toString()));
-
-                    zip.putNextEntry(new ZipEntry(entry));
-                    Files.copy(p, zip);
+                for (ResenjaService.StavkaZipa s : sadrzaj.fajlovi()) {
+                    zip.putNextEntry(new ZipEntry(s.imeUZipu()));
+                    try (InputStream in = s.fajl().getInputStream()) {
+                        in.transferTo(zip);
+                    }
+                    zip.closeEntry();
+                }
+                if (!sadrzaj.nedostaju().isEmpty()) {
+                    zip.putNextEntry(new ZipEntry("NEDOSTAJU_FAJLOVI.txt"));
+                    zip.write(String.join("\n", sadrzaj.nedostaju()).getBytes(StandardCharsets.UTF_8));
                     zip.closeEntry();
                 }
             }

@@ -7,6 +7,7 @@ import org.example.razvojsoftvera.exceptions.ResourceNotFoundException;
 import org.example.razvojsoftvera.model.Komentar;
 import org.example.razvojsoftvera.model.Nastavnik;
 import org.example.razvojsoftvera.model.Rad;
+import org.example.razvojsoftvera.model.StatusRada;
 import org.example.razvojsoftvera.repositories.KomentarRepository;
 import org.example.razvojsoftvera.repositories.NastavnikRepository;
 import org.example.razvojsoftvera.repositories.RadRepository;
@@ -16,6 +17,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +32,7 @@ public class KomentarService {
     private final KomentarRepository komentarRepository;
     private final RadRepository radRepository;
     private final NastavnikRepository nastavnikRepository;
+    private final PristupService pristupService;
 
     @Transactional
     public Komentar save(KomentarCreateRequest request) {
@@ -45,7 +48,13 @@ public class KomentarService {
                         "Rad ne postoji"
                 ));
 
-        Nastavnik nastavnik = nastavnikRepository.findById(request.nastavnikId())
+        if (rad.getStatusRada() != StatusRada.PREDAT){
+            throw new BadRequestException("Komentar se moze dodati samo na predat rad");
+        }
+
+        Long nastavnikId = pristupService.nastavnikId(
+                SecurityContextHolder.getContext().getAuthentication());
+        Nastavnik nastavnik = nastavnikRepository.findById(nastavnikId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Nastavnik ne postoji"
                 ));
@@ -124,6 +133,13 @@ public class KomentarService {
                     "Komentar nije moguce obrisati zbog povezanih podataka"
             );
         }
+    }
+
+    @PreAuthorize("hasRole('STUDENT')")
+    public Page<Komentar> mojiKomentari(Pageable pageable) {
+        Long korisnikId = pristupService.ulogovaniStudentKorisnikId();
+        return komentarRepository
+                .findAllByRad_Prijava_StudentIndeks_Student_Korisnik_Id(korisnikId, pageable);
     }
 
     private Komentar findByIdOrThrow(long id) {

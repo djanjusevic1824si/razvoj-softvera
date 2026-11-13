@@ -14,6 +14,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,13 +29,15 @@ public class ZadatakService {
     private final ZadatakRepository zadatakRepository;
     private final NastavnikRepository nastavnikRepository;
     private final SkladisteFajlova skladisteFajlova;
+    private final PristupService pristupService;
 
     @Transactional
     public Zadatak save(ZadatakCreateRequest request) {
-        Nastavnik nastavnik = nastavnikRepository
-                .findById(request.nastavnikId())
+        Long nastavnikId = pristupService.nastavnikId(
+                SecurityContextHolder.getContext().getAuthentication());
+        Nastavnik nastavnik = nastavnikRepository.findById(nastavnikId)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Nastavnik sa id " + request.nastavnikId() + " ne postoji"
+                        "Nastavnik ne postoji"
                 ));
 
         String putanja = skladisteFajlova.sacuvaj(request.fajl(), "zadaci");
@@ -58,10 +61,11 @@ public class ZadatakService {
     public Zadatak update(Long id, ZadatakUpdateRequest request) {
         Zadatak zadatak = getEntity(id);
 
-        Nastavnik nastavnik = nastavnikRepository
-                .findById(request.nastavnikId())
+        Long nastavnikId = pristupService.nastavnikId(
+                SecurityContextHolder.getContext().getAuthentication());
+        Nastavnik nastavnik = nastavnikRepository.findById(nastavnikId)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Nastavnik sa id " + request.nastavnikId() + " ne postoji"
+                        "Nastavnik ne postoji"
                 ));
 
         zadatak.setNaziv(request.naziv().trim());

@@ -28,7 +28,7 @@ public class LokalnoSkladiste implements SkladisteFajlova{
 
     @Override
     public String sacuvaj(MultipartFile fajl, String folder) {
-        if (fajl.isEmpty() || fajl == null){
+        if (fajl == null || fajl.isEmpty()){
             throw new BadRequestException("Fajl nije poslat ili je prazan");
         }
 

@@ -72,6 +72,14 @@ public class KomentarController {
                 .map(Converters::toKomentarResponse);
     }
 
+    @GetMapping("/moji")
+    public Page<KomentarResponse> mojiKomentari(
+            @ParameterObject Pageable pageable
+    ) {
+        return komentarService.mojiKomentari(pageable)
+                .map(Converters::toKomentarResponse);
+    }
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@PathVariable Long id) {

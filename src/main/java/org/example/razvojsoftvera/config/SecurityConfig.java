@@ -79,7 +79,8 @@ public class SecurityConfig {
                                 "/api/student-indeksi/student/{studentId}",
                                 "/api/prijave/{id}",
                                 "/api/prijave/student-indeks/{studentIndeksId}",
-                                "/api/ispiti/{ispitId}/moje-resenje"
+                                "/api/ispiti/{ispitId}/moje-resenje",
+                                "/api/komentari/moji"
                         ).hasAnyRole("STUDENT", "NASTAVNIK")
 
                         .requestMatchers(

@@ -19,7 +19,7 @@ public class MonitoringController {
 
     @GetMapping
     public List<MonitoringDto> pregled(
-            @RequestParam(required = false) Long ispitId,
+            @RequestParam Long ispitId,
             @RequestParam(required = false) Long grupaId,
             @RequestParam(required = false) StatusRada status) {
         return service.pregled(ispitId, grupaId, status);

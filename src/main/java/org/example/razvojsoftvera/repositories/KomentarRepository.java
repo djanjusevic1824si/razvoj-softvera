@@ -25,4 +25,8 @@ public interface KomentarRepository extends JpaRepository<Komentar, Long> {
 
     @EntityGraph(attributePaths = {"rad", "nastavnik"})
     Page<Komentar> findAllByRad_Id(Long radId, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"rad", "nastavnik"})
+    Page<Komentar> findAllByRad_Prijava_StudentIndeks_Student_Korisnik_Id(
+            Long korisnikId, Pageable pageable);
 }

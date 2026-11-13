@@ -3,10 +3,7 @@ package org.example.razvojsoftvera.services;
 import lombok.RequiredArgsConstructor;
 import org.example.razvojsoftvera.exceptions.ResourceNotFoundException;
 import org.example.razvojsoftvera.exceptions.UnauthorizedException;
-import org.example.razvojsoftvera.repositories.PrijavaRepository;
-import org.example.razvojsoftvera.repositories.RadRepository;
-import org.example.razvojsoftvera.repositories.StudentIndeksRepository;
-import org.example.razvojsoftvera.repositories.StudentRepository;
+import org.example.razvojsoftvera.repositories.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -22,12 +19,13 @@ public class PristupService {
     private final StudentIndeksRepository studentIndeksRepository;
     private final PrijavaRepository prijavaRepository;
     private final RadRepository radRepository;
+    private final NastavnikRepository nastavnikRepository;
 
     public boolean jeSvojProfil(
             Long studentId,
             Authentication authentication
     ) {
-        Long korisnikId = korisnikIdIzTokena(authentication);
+        Long korisnikId = korisnikIdIzTokenaStudent(authentication);
 
         if (studentId == null || korisnikId == null) {
             return false;
@@ -43,7 +41,7 @@ public class PristupService {
             Long ispitId,
             Authentication authentication
     ){
-        Long korisnikId = korisnikIdIzTokena(authentication);
+        Long korisnikId = korisnikIdIzTokenaStudent(authentication);
 
         if(korisnikId == null)
             return false;
@@ -55,7 +53,7 @@ public class PristupService {
             Long indeksId,
             Authentication authentication
     ) {
-        Long korisnikId = korisnikIdIzTokena(authentication);
+        Long korisnikId = korisnikIdIzTokenaStudent(authentication);
 
         if (indeksId == null || korisnikId == null) {
             return false;
@@ -71,7 +69,7 @@ public class PristupService {
             Long prijavaId,
             Authentication authentication
     ) {
-        Long korisnikId = korisnikIdIzTokena(authentication);
+        Long korisnikId = korisnikIdIzTokenaStudent(authentication);
 
         if (prijavaId == null || korisnikId == null) {
             return false;
@@ -84,7 +82,7 @@ public class PristupService {
                 );
     }
 
-    private Long korisnikIdIzTokena(Authentication authentication) {
+    private Long korisnikIdIzTokenaStudent(Authentication authentication) {
         if (!(authentication instanceof JwtAuthenticationToken jwtAuthentication)
                 || !authentication.isAuthenticated()) {
             return null;
@@ -119,7 +117,7 @@ public class PristupService {
     }
     
     public Long ulogovaniStudentKorisnikId(){
-        Long korisnikId = korisnikIdIzTokena(
+        Long korisnikId = korisnikIdIzTokenaStudent(
                 SecurityContextHolder.getContext().getAuthentication()
         );
         if (korisnikId == null) {
@@ -129,12 +127,66 @@ public class PristupService {
         return korisnikId;
     }
 
+    private Long korisnikIdIzTokenaNastavnik(Authentication authentication) {
+        if (!(authentication instanceof JwtAuthenticationToken jwtAuthentication)
+                || !authentication.isAuthenticated()) {
+            return null;
+        }
+
+        boolean nastavnik = authentication.getAuthorities()
+                .stream()
+                .anyMatch(authority ->
+                        authority.getAuthority().equals("ROLE_NASTAVNIK")
+                );
+
+        if (!nastavnik) {
+            return null;
+        }
+
+        Object claim = jwtAuthentication
+                .getToken()
+                .getClaims()
+                .get("korisnikId");
+
+        if (claim == null) {
+            return null;
+        }
+
+        try {
+            long korisnikId = Long.parseLong(claim.toString());
+
+            return korisnikId > 0 ? korisnikId : null;
+        } catch (NumberFormatException ex) {
+            return null;
+        }
+    }
+
+    public Long ulogovaniNastavnikKorisnikId(){
+        Long korisnikId = korisnikIdIzTokenaNastavnik(
+                SecurityContextHolder.getContext().getAuthentication()
+        );
+
+        if (korisnikId == null){
+            throw new UnauthorizedException("Niste ulogovani kao nastavnik");
+        }
+        return korisnikId;
+    }
+
     public Long studentId(Authentication authentication) {
-        Long korisnikId = korisnikIdIzTokena(authentication);
+        Long korisnikId = korisnikIdIzTokenaStudent(authentication);
         if (korisnikId == null) {
             throw new ResourceNotFoundException("Korisnik ne postoji");
         }
         return studentRepository.findIdByKorisnikId(korisnikId)
                 .orElseThrow(() -> new UnauthorizedException("Korisnik nije student"));
+    }
+
+    public Long nastavnikId(Authentication authentication){
+        Long korisnikId = korisnikIdIzTokenaNastavnik(authentication);
+        if (korisnikId == null){
+            throw new ResourceNotFoundException("Korisnik ne postoji");
+        }
+        return nastavnikRepository.findIdByKorisnikId(korisnikId)
+                .orElseThrow(() -> new UnauthorizedException("Korisnik nije nastavnij"));
     }
 }
