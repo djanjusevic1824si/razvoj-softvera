@@ -10,7 +10,6 @@ import org.example.razvojsoftvera.utils.Converters;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
@@ -40,8 +39,7 @@ public class ResenjeController {
         StreamingResponseBody body = out -> {
             try (ZipOutputStream zip = new ZipOutputStream(out)) {
                 for (ResenjeResponse r : lista) {
-                    Path p = Path.of(r.putanjaResenja());
-                    if (!Files.isRegularFile(p)) continue;
+                    Path p = Path.of(r.putanjaResenja()).toAbsolutePath().normalize();
 
                     String entry = String.join("/",
                             (r.grupa()),

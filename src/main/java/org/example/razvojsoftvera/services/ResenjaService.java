@@ -29,7 +29,6 @@ public class ResenjaService {
     private final RadRepository radRepository;
     private final PristupService pristupService;
 
-
     public List<ResenjeResponse> sve(Long ispitId, Long grupaId) {
         return predajaRepository.konacnePredajeSve(ispitId, grupaId);
     }
