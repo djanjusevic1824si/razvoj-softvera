@@ -15,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
 import java.util.List;
 
@@ -27,11 +26,9 @@ public class RadService {
     private final RadRepository radRepository;
     private final PrijavaRepository prijavaRepository;
     private final GrupaRepository grupaRepository;
-    private final NastavnikRepository nastavnikRepository;
     private final IspitRepository ispitRepository;
     private final PredajaRepository predajaRepository;
     private final SkladisteFajlova skladiste;
-    private final RequestMappingHandlerAdapter requestMappingHandlerAdapter;
 
     @Transactional
     public Rad save(RadCreateRequest request) {
