@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/polaganje")
+@RequestMapping("/api/polaganje")
 public class PolaganjeController {
 
     private final PolaganjeService polaganjeService;

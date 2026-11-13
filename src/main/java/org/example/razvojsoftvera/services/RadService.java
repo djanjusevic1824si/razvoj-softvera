@@ -7,7 +7,6 @@ import org.example.razvojsoftvera.exceptions.ResourceNotFoundException;
 import org.example.razvojsoftvera.model.*;
 import org.example.razvojsoftvera.repositories.*;
 import org.example.razvojsoftvera.requests.RadCreateRequest;
-import org.example.razvojsoftvera.requests.RadOcenaRequest;
 import org.example.razvojsoftvera.requests.RadUpdateRequest;
 import org.springframework.core.io.Resource;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -18,8 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service

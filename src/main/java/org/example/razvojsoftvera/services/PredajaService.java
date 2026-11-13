@@ -11,6 +11,7 @@ import org.example.razvojsoftvera.repositories.RadRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,6 +46,7 @@ public class PredajaService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('NASTAVNIK')")
     public void deleteById(Long id) {
         Predaja predaja = findByIdOrThrow(id);
         findRadForUpdateOrThrow(predaja.getRad().getId());

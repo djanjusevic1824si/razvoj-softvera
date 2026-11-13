@@ -1,7 +1,6 @@
 package org.example.razvojsoftvera.services;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.example.razvojsoftvera.model.Predaja;
 import org.example.razvojsoftvera.model.Rad;
 import org.example.razvojsoftvera.model.StatusRada;
@@ -20,7 +19,6 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class IstekPolaganjaService {
 
     private final RadRepository radRepository;
@@ -51,10 +49,6 @@ public class IstekPolaganjaService {
             }
 
             rad.setStatusRada(StatusRada.PREDAT);
-        }
-
-        if (!radovi.isEmpty()){
-            log.info("Automatski zatvoreno radova: {}", radovi.size());
         }
     }
 }
