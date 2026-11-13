@@ -34,3 +34,6 @@ build/
 
 ### Lokalna podešavanja (lozinke) ###
 .env
+
+### Skladiste zadataka ###
+/storage/

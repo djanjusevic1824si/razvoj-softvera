@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
         }
 )
 @Data
-public class Predaja { // TODO: NAJVISE 1 KONACNA PREDAJA!!!!
+public class Predaja {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
